@@ -1,0 +1,45 @@
+.Sale {
+  width: 100%;
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  position: relative;
+
+  &__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+
+    &__left {
+      width: 50%;
+      h2 {
+        font-size: 36px;
+        font-weight: 600;
+        border-bottom: 1px solid #e97730;
+        padding-bottom: 10px;
+      }
+
+      p {
+        font-size: 30px;
+        font-weight: 500;
+        color: #e97730;
+        margin: 0 0 30px;
+        position: relative;
+      }
+
+      .ant-btn {
+        background-color: #000;
+        color: #fff;
+        border: none;
+        padding: 20px 36px;
+      }
+    }
+
+    &__right {
+      width: 50%;
+      img {
+        width: 100%;
+      }
+    }
+  }
+}
