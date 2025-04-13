@@ -1,4 +1,3 @@
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 
@@ -7,24 +6,21 @@ class UserService {
     try {
       const { username, email, password } = userData;
 
-      // Проверяем, существует ли пользователь с таким email
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
         throw new Error("User with this email already exists");
       }
 
-      // Создаем нового пользователя
       const user = await User.create({
         username,
         email,
         password,
-        role: "user", // По умолчанию роль 'user'
+        role: "user",
       });
 
-      // Генерируем токен
       const token = jwt.sign(
         { id: user.id, role: user.role },
-        process.env.JWT_SECRET || "your-secret-key",
+        process.env.JWT_SECRET,
         { expiresIn: "24h" }
       );
 
@@ -57,7 +53,7 @@ class UserService {
 
       const token = jwt.sign(
         { id: user.id, role: user.role },
-        process.env.JWT_SECRET || "your-secret-key",
+        process.env.JWT_SECRET,
         { expiresIn: "24h" }
       );
 
