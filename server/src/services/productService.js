@@ -26,10 +26,26 @@ class ProductService {
   }
 
   async createProduct(productData) {
-    return await Product.create(productData);
+    const { name, description, price, categoryId } = productData;
+    if (!name || !description || !price || !categoryId) {
+      throw new Error("Missing required fields");
+    }
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      categoryId,
+    });
+    return await Product.findByPk(product.id, {
+      include: [{ model: Category }],
+    });
   }
 
   async updateProduct(id, productData) {
+    const { name, description, price, categoryId } = productData;
+    if (!name || !description || !price || !categoryId) {
+      throw new Error("Missing required fields");
+    }
     const product = await Product.findByPk(id);
     if (!product) throw new Error("Product not found");
     return await product.update(productData);

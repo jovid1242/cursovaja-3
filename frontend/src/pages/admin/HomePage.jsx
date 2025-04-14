@@ -28,7 +28,9 @@ const AdminPage = () => {
   const [form] = Form.useForm();
   const { data: productsData, isLoading: isProductsLoading } = useProducts();
   const { data: usersData, isLoading: isUsersLoading } = useGetUsers();
-  const { data: categoriesData } = useCategories();
+  const { data: categoriesData } = useCategories({
+    enabled: isModalVisible,
+  });
   const createProduct = useCreateProduct();
 
   const products = productsData?.rows || [];

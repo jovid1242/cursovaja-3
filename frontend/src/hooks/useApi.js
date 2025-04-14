@@ -75,10 +75,11 @@ export const useDeleteProduct = () => {
 };
 
 // Category hooks
-export const useCategories = () => {
+export const useCategories = (params) => {
   return useQuery({
-    queryKey: ["categories"],
-    queryFn: categoryService.getCategories,
+    queryKey: ["categories", params.enabled],
+    queryFn: () => categoryService.getCategories(),
+    enabled: !!params?.enabled,
   });
 };
 

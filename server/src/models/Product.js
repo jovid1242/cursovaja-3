@@ -25,7 +25,22 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Categories",
+        key: "id",
+      },
+    },
   });
+
+  Product.associate = (models) => {
+    Product.belongsTo(models.Category, {
+      foreignKey: "categoryId",
+      as: "Category",
+    });
+  };
 
   return Product;
 };
