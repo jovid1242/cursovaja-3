@@ -4,43 +4,18 @@ import { Link } from "react-router-dom";
 import ProductCard from "../../components/ProductCard";
 import "../../styles/pages/HomePage.scss";
 import Sale from "../../components/Sale";
+import { useProducts } from "../../hooks/useApi";
 const { Title } = Typography;
 
 const HomePage = () => {
-  const dealProducts = [
-    {
-      id: 4,
-      name: "Modern Armchair",
-      price: 399.99,
-      image:
-        "https://htmldemo.net/urdan/urdan/assets/images/product/product-2.png",
-      discount: 30,
-    },
-    {
-      id: 5,
-      name: "Designer Sofa",
-      price: 899.99,
-      image:
-        "https://htmldemo.net/urdan/urdan/assets/images/product/product-2.png",
-      discount: 25,
-    },
-    {
-      id: 6,
-      name: "Leather Recliner",
-      price: 599.99,
-      image:
-        "https://htmldemo.net/urdan/urdan/assets/images/product/product-2.png",
-      discount: 20,
-    },
-    {
-      id: 7,
-      name: "Dining Chair Set",
-      price: 299.99,
-      image:
-        "https://htmldemo.net/urdan/urdan/assets/images/product/product-2.png",
-      discount: 15,
-    },
-  ];
+  const { data: topProductsData = { count: 0, rows: [] } } = useProducts({
+    limit: 4,
+    sort: "rating",
+  });
+  const { data: newProductsData = { count: 0, rows: [] } } = useProducts({
+    limit: 20,
+    sort: "createdAt",
+  });
 
   return (
     <div>
@@ -62,9 +37,9 @@ const HomePage = () => {
       </div>
 
       <div className='deal-section'>
-        <Title level={3}>DEAL OF THE DAY</Title>
+        <Title level={3}>Топ товары</Title>
         <Row gutter={[24, 24]}>
-          {dealProducts.map((product) => (
+          {topProductsData.rows.map((product) => (
             <Col xs={24} sm={12} md={6} key={product.id}>
               <ProductCard product={product} />
             </Col>
@@ -75,9 +50,9 @@ const HomePage = () => {
       <Sale />
 
       <div className='deal-section'>
-        <Title level={3}>Hot Products</Title>
+        <Title level={3}>Новинки</Title>
         <Row gutter={[24, 24]}>
-          {dealProducts.map((product) => (
+          {newProductsData.rows.map((product) => (
             <Col xs={24} sm={12} md={6} key={product.id}>
               <ProductCard product={product} />
             </Col>

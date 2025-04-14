@@ -1,50 +1,50 @@
 import React, { useState } from "react";
-import { Select, Slider, Input, Form, Row, Col, Typography } from "antd";
+import {
+  Select,
+  Slider,
+  Input,
+  Form,
+  Row,
+  Col,
+  Typography,
+  Empty,
+  Spin,
+} from "antd";
 import "../../styles/pages/ProductsPage.scss";
 import ProductCard from "../../components/ProductCard";
+import { useProducts, useCategories } from "../../hooks/useApi";
 
 const { Title } = Typography;
 
-const dealProducts = [
-  {
-    id: 4,
-    name: "Modern Armchair",
-    price: 399.99,
-    image:
-      "https://htmldemo.net/urdan/urdan/assets/images/product/product-2.png",
-    discount: 30,
-  },
-  {
-    id: 5,
-    name: "Designer Sofa",
-    price: 899.99,
-    image:
-      "https://htmldemo.net/urdan/urdan/assets/images/product/product-2.png",
-    discount: 25,
-  },
-  {
-    id: 6,
-    name: "Leather Recliner",
-    price: 599.99,
-    image:
-      "https://htmldemo.net/urdan/urdan/assets/images/product/product-2.png",
-    discount: 20,
-  },
-  {
-    id: 7,
-    name: "Dining Chair Set",
-    price: 299.99,
-    image:
-      "https://htmldemo.net/urdan/urdan/assets/images/product/product-2.png",
-    discount: 15,
-  },
-];
-
 export default function ProductsPage() {
-  const [priceRange, setPriceRange] = useState([36951, 430599]);
+  const [form] = Form.useForm();
+  const [filters, setFilters] = useState({
+    name: "",
+    categoryId: "",
+    minPrice: 0,
+    maxPrice: 1000000,
+  });
+
+  const { data: productsData, isLoading } = useProducts(filters);
+  const { data: categoriesData } = useCategories({ enabled: true });
+
+  const products = productsData?.rows || [];
+  const total = productsData?.count || 0;
+  const categories = categoriesData || [];
+
+  const handleFilterChange = (changedValues) => {
+    setFilters((prev) => ({
+      ...prev,
+      ...changedValues,
+    }));
+  };
 
   const handlePriceChange = (value) => {
-    setPriceRange(value);
+    setFilters((prev) => ({
+      ...prev,
+      minPrice: value[0],
+      maxPrice: value[1],
+    }));
   };
 
   return (
@@ -54,62 +54,31 @@ export default function ProductsPage() {
           <div className='ProductsPage-wrapper__left'>
             <h2>Products</h2>
             <div className='filter-section'>
-              <Form layout='vertical'>
+              <Form
+                form={form}
+                layout='vertical'
+                onValuesChange={handleFilterChange}
+              >
                 <Form.Item name='name'>
                   <Input placeholder='Поиск по названию' />
                 </Form.Item>
-                <Form.Item name='category'>
+                <Form.Item name='categoryId'>
                   <Select
                     showSearch
                     style={{ width: 300, marginBottom: 20 }}
                     placeholder='Выберите категорию'
                     optionFilterProp='label'
-                    filterSort={(optionA, optionB) => {
-                      var _a, _b;
-                      return (
-                        (_a =
-                          optionA === null || optionA === void 0
-                            ? void 0
-                            : optionA.label) !== null && _a !== void 0
-                          ? _a
-                          : ""
-                      )
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
                         .toLowerCase()
-                        .localeCompare(
-                          ((_b =
-                            optionB === null || optionB === void 0
-                              ? void 0
-                              : optionB.label) !== null && _b !== void 0
-                            ? _b
-                            : ""
-                          ).toLowerCase()
-                        );
-                    }}
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
                     options={[
-                      {
-                        value: "1",
-                        label: "Все категории",
-                      },
-                      {
-                        value: "2",
-                        label: "Категория 1",
-                      },
-                      {
-                        value: "3",
-                        label: "Communicated",
-                      },
-                      {
-                        value: "4",
-                        label: "Identified",
-                      },
-                      {
-                        value: "5",
-                        label: "Resolved",
-                      },
-                      {
-                        value: "6",
-                        label: "Cancelled",
-                      },
+                      { value: "", label: "Все категории" },
+                      ...categories.map((category) => ({
+                        value: category.id,
+                        label: category.name,
+                      })),
                     ]}
                   />
                 </Form.Item>
@@ -117,14 +86,14 @@ export default function ProductsPage() {
                   <div className='price-filter'>
                     <h3>Цена, ₽</h3>
                     <div className='price-inputs'>
-                      <span>{priceRange[0]}</span>
-                      <span>{priceRange[1]}</span>
+                      <span>{filters.minPrice}</span>
+                      <span>{filters.maxPrice}</span>
                     </div>
                     <Slider
                       range
                       min={0}
                       max={1000000}
-                      value={priceRange}
+                      value={[filters.minPrice, filters.maxPrice]}
                       onChange={handlePriceChange}
                     />
                   </div>
@@ -134,14 +103,23 @@ export default function ProductsPage() {
           </div>
           <div className='ProductsPage-wrapper__right'>
             <div className='ProductsPage-wrapper__right-section'>
-              <h4>Товары (54)</h4>
-              <Row gutter={[24, 24]}>
-                {dealProducts.map((product) => (
-                  <Col xs={24} sm={12} md={6} key={product.id}>
-                    <ProductCard product={product} />
-                  </Col>
-                ))}
-              </Row>
+              <h4>Товары ({total})</h4>
+              <Spin spinning={isLoading}>
+                {products.length > 0 ? (
+                  <Row gutter={[24, 24]}>
+                    {products.map((product) => (
+                      <Col xs={24} sm={12} md={6} key={product.id}>
+                        <ProductCard product={product} />
+                      </Col>
+                    ))}
+                  </Row>
+                ) : (
+                  <Empty
+                    description='Товары не найдены'
+                    style={{ marginTop: 50 }}
+                  />
+                )}
+              </Spin>
             </div>
           </div>
         </div>

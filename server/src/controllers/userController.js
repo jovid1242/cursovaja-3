@@ -75,7 +75,10 @@ class UserController {
 
   async updateUserStatus(req, res) {
     try {
-      const user = await userService.updateUserStatus(req.params.id, req.body);
+      const user = await userService.updateUserStatus(
+        req.params.id,
+        req.body.status
+      );
       res.json(user);
     } catch (error) {
       res.status(400).json({ message: error.message });

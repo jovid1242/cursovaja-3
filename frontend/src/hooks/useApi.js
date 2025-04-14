@@ -4,6 +4,7 @@ import {
   productService,
   categoryService,
   userService,
+  cartService,
 } from "../services";
 
 // Auth hooks
@@ -131,12 +132,41 @@ export const useGetUsers = () => {
 
 export const useUpdateStatusUser = () => {
   return useMutation({
-    mutationFn: userService.updateStatusUser,
+    mutationFn: ({ id, status }) => userService.updateStatusUser(id, status),
   });
 };
 
 export const useDeleteUser = () => {
   return useMutation({
     mutationFn: userService.deleteUser,
+  });
+};
+
+// Cart hooks
+export const useCart = () => {
+  return useQuery({
+    queryKey: ["cart"],
+    queryFn: cartService.getCart,
+  });
+};
+
+export const useAddToCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ productId, quantity }) =>
+      cartService.addToCart(productId, quantity),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+};
+
+export const useDeleteCartItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (cartItemId) => cartService.deleteCartItem(cartItemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
   });
 };

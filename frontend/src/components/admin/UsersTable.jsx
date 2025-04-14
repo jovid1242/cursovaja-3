@@ -1,10 +1,22 @@
 import React from "react";
-import { Table, Button, Select, Space } from "antd";
+import { Table, Button, Select, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { useUpdateStatusUser } from "../../hooks/useApi";
 
 const { Option } = Select;
 
 const UsersTable = ({ users, isLoading }) => {
+  const updateStatusUser = useUpdateStatusUser();
+
+  const handleRoleChange = async (record, newRole) => {
+    try {
+      await updateStatusUser.mutateAsync({ id: record.id, status: newRole });
+      message.success("Роль пользователя успешно обновлена");
+    } catch (error) {
+      message.error("Ошибка при обновлении роли пользователя");
+    }
+  };
+
   const columns = [
     {
       title: "Имя пользователя",
@@ -24,7 +36,11 @@ const UsersTable = ({ users, isLoading }) => {
         <Select
           defaultValue={record.role}
           style={{ width: 120 }}
-          onChange={(value) => handleRoleChange(record, value)}
+          onChange={(value) => {
+            console.log("Select onChange value:", value);
+            handleRoleChange(record, value);
+          }}
+          loading={updateStatusUser.isPending}
         >
           <Option value='admin'>Admin</Option>
           <Option value='user'>User</Option>
@@ -45,11 +61,6 @@ const UsersTable = ({ users, isLoading }) => {
       ),
     },
   ];
-
-  const handleRoleChange = (record, newRole) => {
-    // TODO: Implement role change functionality
-    console.log("Change role:", record, newRole);
-  };
 
   const handleDelete = (record) => {
     // TODO: Implement delete functionality

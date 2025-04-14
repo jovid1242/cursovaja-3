@@ -1,6 +1,4 @@
-const Cart = require("../models/Cart");
-const Order = require("../models/Order");
-const Product = require("../models/Product");
+const { Cart, Order, Product } = require("../models");
 
 class CartService {
   async getCartItems(userId) {

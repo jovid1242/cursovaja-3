@@ -41,7 +41,7 @@ module.exports = {
           price: 89999.99,
           image: "samsung-rf50.jpg",
           stock: 5,
-          CategoryId: categories[0].id,
+          categoryId: categories[0].id,
         },
         {
           name: "LG GA-B459CQCL",
@@ -50,7 +50,7 @@ module.exports = {
           price: 54999.99,
           image: "lg-ga-b459.jpg",
           stock: 8,
-          CategoryId: categories[0].id,
+          categoryId: categories[0].id,
         },
         // Стиральные машины
         {
@@ -59,7 +59,7 @@ module.exports = {
           price: 44999.99,
           image: "bosch-wan28.jpg",
           stock: 10,
-          CategoryId: categories[1].id,
+          categoryId: categories[1].id,
         },
         {
           name: "LG F2V5GS0W",
@@ -68,7 +68,7 @@ module.exports = {
           price: 39999.99,
           image: "lg-f2v5.jpg",
           stock: 7,
-          CategoryId: categories[1].id,
+          categoryId: categories[1].id,
         },
         // Телевизоры
         {
@@ -77,7 +77,7 @@ module.exports = {
           price: 79999.99,
           image: "sony-kd55.jpg",
           stock: 4,
-          CategoryId: categories[2].id,
+          categoryId: categories[2].id,
         },
         {
           name: "LG OLED55C1RLA",
@@ -85,7 +85,7 @@ module.exports = {
           price: 129999.99,
           image: "lg-oled55.jpg",
           stock: 3,
-          CategoryId: categories[2].id,
+          categoryId: categories[2].id,
         },
         // Пылесосы
         {
@@ -94,7 +94,7 @@ module.exports = {
           price: 49999.99,
           image: "dyson-v15.jpg",
           stock: 6,
-          CategoryId: categories[3].id,
+          categoryId: categories[3].id,
         },
         {
           name: "Samsung VS20R9048T3",
@@ -102,7 +102,7 @@ module.exports = {
           price: 34999.99,
           image: "samsung-vs20.jpg",
           stock: 9,
-          CategoryId: categories[3].id,
+          categoryId: categories[3].id,
         },
         // Микроволновые печи
         {
@@ -111,7 +111,7 @@ module.exports = {
           price: 12999.99,
           image: "panasonic-nn.jpg",
           stock: 12,
-          CategoryId: categories[4].id,
+          categoryId: categories[4].id,
         },
         {
           name: "Samsung MC32K7055CT",
@@ -119,7 +119,7 @@ module.exports = {
           price: 24999.99,
           image: "samsung-mc32.jpg",
           stock: 6,
-          CategoryId: categories[4].id,
+          categoryId: categories[4].id,
         },
       ]);
     } catch (error) {

@@ -2,18 +2,32 @@ const { Op } = require("sequelize");
 const { Product, Category } = require("../models");
 
 class ProductService {
-  async getProducts({ page = 1, limit = 10, category, search }) {
+  async getProducts({
+    page = 1,
+    limit = 10,
+    categoryId,
+    name,
+    minPrice,
+    maxPrice,
+  }) {
     const offset = (page - 1) * limit;
     const where = {};
 
-    if (category) where.categoryId = category;
-    if (search) where.name = { [Op.like]: `%${search}%` };
+    if (categoryId) where.categoryId = categoryId;
+    if (name) where.name = { [Op.like]: `%${name}%` };
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.price = {};
+      if (minPrice !== undefined) where.price[Op.gte] = minPrice;
+      if (maxPrice !== undefined) where.price[Op.lte] = maxPrice;
+    }
 
     return await Product.findAndCountAll({
       where,
       limit,
       offset,
       include: [{ model: Category }],
+      order: [["createdAt", "DESC"]],
     });
   }
 
@@ -26,7 +40,7 @@ class ProductService {
   }
 
   async createProduct(productData) {
-    const { name, description, price, categoryId } = productData;
+    const { name, description, price, categoryId, image, stock } = productData;
     if (!name || !description || !price || !categoryId) {
       throw new Error("Missing required fields");
     }
@@ -35,20 +49,32 @@ class ProductService {
       description,
       price,
       categoryId,
+      image,
+      stock,
     });
-    return await Product.findByPk(product.id, {
-      include: [{ model: Category }],
-    });
+    return product;
   }
 
   async updateProduct(id, productData) {
-    const { name, description, price, categoryId } = productData;
+    const { name, description, price, categoryId, image, stock } = productData;
     if (!name || !description || !price || !categoryId) {
       throw new Error("Missing required fields");
     }
     const product = await Product.findByPk(id);
     if (!product) throw new Error("Product not found");
-    return await product.update(productData);
+    return await product.update(
+      {
+        name,
+        description,
+        price,
+        categoryId,
+        image,
+        stock,
+      },
+      {
+        where: { id },
+      }
+    );
   }
 
   async deleteProduct(id) {

@@ -8,13 +8,19 @@ import {
   Form,
   Input,
   InputNumber,
+  Select,
 } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { useDeleteProduct, useUpdateProduct } from "../../hooks/useApi";
+import {
+  useDeleteProduct,
+  useUpdateProduct,
+  useCategories,
+} from "../../hooks/useApi";
 
 const ProductsTable = ({ products, total, isLoading }) => {
   const deleteProduct = useDeleteProduct();
   const updateProduct = useUpdateProduct();
+  const { data: categories } = useCategories({ enabled: true });
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -46,6 +52,7 @@ const ProductsTable = ({ products, total, isLoading }) => {
       description: record.description,
       stock: record.stock,
       image: record.image,
+      categoryId: record.Category?.id,
     });
     setEditModalVisible(true);
   };
@@ -107,7 +114,7 @@ const ProductsTable = ({ products, total, isLoading }) => {
       title: "Категория",
       dataIndex: "category",
       key: "category",
-      render: (_, record) => record.Category?.name,
+      render: (_, record) => record.Category?.name || "Без категории",
     },
     {
       title: "Описание",
@@ -220,6 +227,21 @@ const ProductsTable = ({ products, total, isLoading }) => {
             ]}
           >
             <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item
+            name='categoryId'
+            label='Категория'
+            rules={[
+              { required: true, message: "Пожалуйста, выберите категорию" },
+            ]}
+          >
+            <Select
+              placeholder='Выберите категорию'
+              options={categories?.map((category) => ({
+                value: category.id,
+                label: category.name,
+              }))}
+            />
           </Form.Item>
         </Form>
       </Modal>

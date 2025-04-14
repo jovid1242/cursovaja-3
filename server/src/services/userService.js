@@ -116,13 +116,13 @@ class UserService {
     }
   }
 
-  async updateUserStatus(id, userData) {
+  async updateUserStatus(id, status) {
     try {
       const user = await User.findByPk(id);
       if (!user) {
         throw new Error("User not found");
       }
-      user.status = userData.status;
+      user.role = status;
       await user.save();
       return user;
     } catch (error) {
