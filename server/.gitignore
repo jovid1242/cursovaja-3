@@ -3,3 +3,4 @@
 /src/database.sqlite
 /src/database.sqlite-journal
 /database.sqlite
+/node_modules
