@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const baseURL =
-  import.meta.env.VITE_API_URL ||
-  "https://ecommerce.4519361-lr59745.twc1.net/api";
+const baseURL = "https://ecommerce.4519361-lr59745.twc1.net/api";
 
 const axiosInstance = axios.create({
   baseURL,
