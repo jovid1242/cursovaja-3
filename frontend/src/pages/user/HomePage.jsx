@@ -1,6 +1,6 @@
 import { Layout, Typography, Button, Row, Col } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ProductCard from "../../components/ProductCard";
 import "../../styles/pages/HomePage.scss";
 import Sale from "../../components/Sale";
@@ -16,16 +16,21 @@ const HomePage = () => {
     limit: 20,
     sort: "createdAt",
   });
+  const navigate = useNavigate();
 
   return (
     <div>
       <div className='hero-section'>
         <div className='hero-content'>
           <Title level={2} className='collection-title'>
-            Summer Collection
+            Лучшие коллекции
           </Title>
-          <Button type='primary' size='large'>
-            Shop Now <ArrowRightOutlined />
+          <Button
+            type='primary'
+            size='large'
+            onClick={() => navigate("/products")}
+          >
+            Посмотреть <ArrowRightOutlined />
           </Button>
         </div>
         <div className='hero-image'>

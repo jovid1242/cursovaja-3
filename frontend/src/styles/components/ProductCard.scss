@@ -88,7 +88,14 @@
 }
 
 @media (max-width: 768px) {
+  .product-link {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .product-card {
+    width: fit-content;
     .image-container {
       height: 220px;
     }

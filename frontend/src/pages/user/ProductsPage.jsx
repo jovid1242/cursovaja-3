@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Select,
   Slider,
@@ -10,6 +10,7 @@ import {
   Empty,
   Spin,
 } from "antd";
+import { useSearchParams } from "react-router-dom";
 import "../../styles/pages/ProductsPage.scss";
 import ProductCard from "../../components/ProductCard";
 import { useProducts, useCategories } from "../../hooks/useApi";
@@ -18,6 +19,7 @@ const { Title } = Typography;
 
 export default function ProductsPage() {
   const [form] = Form.useForm();
+  const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState({
     name: "",
     categoryId: "",
@@ -31,6 +33,19 @@ export default function ProductsPage() {
   const products = productsData?.rows || [];
   const total = productsData?.count || 0;
   const categories = categoriesData || [];
+
+  useEffect(() => {
+    const categoryId = searchParams.get("categoryId");
+    if (categoryId) {
+      setFilters((prev) => ({
+        ...prev,
+        categoryId: categoryId,
+      }));
+      form.setFieldsValue({
+        categoryId: categoryId,
+      });
+    }
+  }, [searchParams, form]);
 
   const handleFilterChange = (changedValues) => {
     setFilters((prev) => ({
@@ -60,7 +75,7 @@ export default function ProductsPage() {
                 onValuesChange={handleFilterChange}
               >
                 <Form.Item name='name'>
-                  <Input placeholder='Поиск по названию' />
+                  <Input placeholder='Поиск по названию' size='large' />
                 </Form.Item>
                 <Form.Item name='categoryId'>
                   <Select
@@ -80,6 +95,8 @@ export default function ProductsPage() {
                         label: category.name,
                       })),
                     ]}
+                    size='large'
+                    className='ant-select-selector3'
                   />
                 </Form.Item>
                 <Form.Item name='price'>
@@ -95,6 +112,7 @@ export default function ProductsPage() {
                       max={1000000}
                       value={[filters.minPrice, filters.maxPrice]}
                       onChange={handlePriceChange}
+                      size='large'
                     />
                   </div>
                 </Form.Item>

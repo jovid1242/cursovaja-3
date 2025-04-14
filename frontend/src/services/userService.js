@@ -6,7 +6,6 @@ export const userService = {
     return response.data;
   },
   updateStatusUser: async (id, status) => {
-    console.log(id, status);
     const response = await axiosInstance.put(`/users/${id}/status`, { status });
     return response.data;
   },

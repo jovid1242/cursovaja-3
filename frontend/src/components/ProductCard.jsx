@@ -18,9 +18,9 @@ const ProductCard = ({ product }) => {
           <h3 className='product-name'>{name}</h3>
           <div className='price-container'>
             {originalPrice && (
-              <span className='original-price'>${originalPrice}</span>
+              <span className='original-price'>{originalPrice}₽</span>
             )}
-            <span className='current-price'>${price}</span>
+            <span className='current-price'>{price}₽</span>
           </div>
         </div>
       </div>

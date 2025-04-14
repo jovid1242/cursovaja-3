@@ -8,37 +8,45 @@ export default function Footer() {
       <div className='container'>
         <div className='Footer-wrapper'>
           <div className='Footer__container__left'>
-            <h3>Logo</h3>
+            <h3>Mii</h3>
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quos.
+              Разработанный для вас, Mii - это онлайн-магазин, который поможет
+              вам найти и купить все, что вам нужно.
+              <br />
+              Copyright 2025 Jovid Ma. Все права защищены.
             </p>
           </div>
           <div className='Footer__container__right'>
-            <h3>Categories</h3>
+            <h3>Категории</h3>
             <ul>
               <li>
-                <Link to='/'>Home</Link>
+                <Link to='/products?categoryId=31'>Холодильники</Link>
               </li>
               <li>
-                <Link to='/'>Home</Link>
+                <Link to='/products?categoryId=32'>Стиральные машины</Link>
               </li>
               <li>
-                <Link to='/'>Home</Link>
+                <Link to='/products?categoryId=33'>Телевизоры</Link>
+              </li>
+              <li>
+                <Link to='/products?categoryId=34'>Стиральные машины</Link>
+              </li>
+              <li>
+                <Link to='/products?categoryId=35'>Телевизоры</Link>
               </li>
             </ul>
           </div>
           <div className='Footer__container__right'>
-            <h3>Pages</h3>
+            <h3>Страницы</h3>
             <ul>
               <li>
-                <Link to='/'>Home</Link>
+                <Link to='/'>Главная</Link>
               </li>
               <li>
-                <Link to='/'>Home</Link>
+                <Link to='/'>О нас</Link>
               </li>
               <li>
-                <Link to='/'>Home</Link>
+                <Link to='/'>Контакты</Link>
               </li>
             </ul>
           </div>

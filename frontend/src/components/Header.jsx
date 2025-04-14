@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Badge } from "antd";
 import {
   SearchOutlined,
@@ -7,15 +7,19 @@ import {
   ShoppingCartOutlined,
   LogoutOutlined,
   LoginOutlined,
+  DashboardOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import "../styles/Header.scss";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import { useCategories } from "../hooks/useApi";
+import Cart from "./Cart";
 export default function Header() {
+  const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
   const { logout: authLogout, user } = useAuth();
+  const { data: categories } = useCategories({ enabled: true });
 
   const handleLogout = () => {
     authLogout();
@@ -24,21 +28,22 @@ export default function Header() {
 
   return (
     <header className='header container'>
+      <Cart visible={visible} onVisibleChange={(e) => setVisible(e)} />
       <div className='header__container'>
         <Link to='/' className='header__logo'>
-          urdan.
+          Mii
         </Link>
 
         <nav className='header__nav'>
-          <Link to='/' className='header__nav-link'>
-            Home
-          </Link>
-          <Link to='/shop' className='header__nav-link'>
-            Shop
-          </Link>
-          <Link to='/pages' className='header__nav-link'>
-            Pages
-          </Link>
+          {categories?.map((category) => (
+            <Link
+              key={category.id}
+              to={`/products?categoryId=${category.id}`}
+              className='header__nav-link'
+            >
+              {category.name}
+            </Link>
+          ))}
         </nav>
 
         <div className='header__actions'>
@@ -55,9 +60,20 @@ export default function Header() {
             />
           )}
           {user && (
-            <Badge count={0} className='cart-badge'>
+            <Badge
+              count={0}
+              className='cart-badge'
+              onClick={() => setVisible(true)}
+            >
               <Button type='text' icon={<ShoppingCartOutlined />} />
             </Badge>
+          )}
+          {user?.role === "admin" && (
+            <Button
+              type='text'
+              icon={<DashboardOutlined />}
+              onClick={() => navigate("/admin")}
+            />
           )}
           {user ? (
             <Button
