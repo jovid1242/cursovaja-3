@@ -2,3 +2,4 @@
 /src/.env
 /src/database.sqlite
 /src/database.sqlite-journal
+/database.sqlite
