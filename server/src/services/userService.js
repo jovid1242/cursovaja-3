@@ -4,7 +4,7 @@ const { User } = require("../models");
 class UserService {
   async register(userData) {
     try {
-      const { username, email, password } = userData;
+      const { username, email, password, name, phone, address } = userData;
 
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
@@ -15,6 +15,9 @@ class UserService {
         username,
         email,
         password,
+        name,
+        phone,
+        address,
         role: "user",
       });
 
@@ -29,6 +32,9 @@ class UserService {
           id: user.id,
           username: user.username,
           email: user.email,
+          name: user.name,
+          phone: user.phone,
+          address: user.address,
           role: user.role,
         },
         token,
@@ -41,12 +47,19 @@ class UserService {
   async login(email, password) {
     try {
       const user = await User.findOne({ where: { email } });
+      console.log("User found:", user ? "yes" : "no");
 
       if (!user) {
+        console.log("User not found for email:", email);
         throw new Error("User not found");
       }
 
       const isPasswordValid = await user.validatePassword(password);
+      console.log(
+        "Password validation:",
+        isPasswordValid ? "valid" : "invalid"
+      );
+
       if (!isPasswordValid) {
         throw new Error("Invalid password");
       }
@@ -62,12 +75,16 @@ class UserService {
           id: user.id,
           username: user.username,
           email: user.email,
+          name: user.name,
+          phone: user.phone,
+          address: user.address,
           role: user.role,
         },
         token,
       };
     } catch (error) {
-      throw new Error(error.message);
+      console.error("Login service error:", error);
+      throw error;
     }
   }
 
@@ -81,6 +98,9 @@ class UserService {
         id: user.id,
         username: user.username,
         email: user.email,
+        name: user.name,
+        phone: user.phone,
+        address: user.address,
         role: user.role,
       };
     } catch (error) {
@@ -100,6 +120,9 @@ class UserService {
         id: user.id,
         username: user.username,
         email: user.email,
+        name: user.name,
+        phone: user.phone,
+        address: user.address,
         role: user.role,
       };
     } catch (error) {

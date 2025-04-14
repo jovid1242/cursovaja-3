@@ -4,7 +4,7 @@ class CartService {
   async getCartItems(userId) {
     return await Cart.findAll({
       where: { userId },
-      include: [{ model: Product }],
+      include: [{ model: Product, as: "Product" }],
     });
   }
 
@@ -28,7 +28,7 @@ class CartService {
   async createOrder(userId) {
     const cartItems = await Cart.findAll({
       where: { userId },
-      include: [{ model: Product }],
+      include: [{ model: Product, as: "Product" }],
     });
 
     if (cartItems.length === 0) {
@@ -37,11 +37,22 @@ class CartService {
 
     const orders = await Promise.all(
       cartItems.map(async (item) => {
+        if (
+          !item.productId ||
+          !item.quantity ||
+          !item.Product ||
+          !item.Product.price
+        ) {
+          console.error("Invalid cart item data:", item);
+          throw new Error("Invalid cart item data");
+        }
+
         const order = await Order.create({
           userId,
           productId: item.productId,
           quantity: item.quantity,
           totalPrice: item.quantity * item.Product.price,
+          orderDate: new Date(),
         });
         await item.destroy();
         return order;
@@ -54,7 +65,7 @@ class CartService {
   async getOrderHistory(userId) {
     return await Order.findAll({
       where: { userId },
-      include: [{ model: Product }],
+      include: [{ model: Product, as: "Product" }],
     });
   }
 }

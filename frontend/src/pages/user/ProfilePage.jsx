@@ -11,6 +11,9 @@ import {
   Tag,
   Divider,
   Upload,
+  Spin,
+  Image,
+  message,
 } from "antd";
 import {
   UserOutlined,
@@ -21,14 +24,50 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import "../../styles/pages/ProfilePage.scss";
+import { useAuth } from "../../context/AuthContext";
+import { useOrdersByUser, useUpdateProfile } from "../../hooks/useApi";
 
 const { TextArea } = Input;
 
 export default function ProfilePage() {
   const [form] = Form.useForm();
+  const { user } = useAuth();
+  const { data: orders, isLoading } = useOrdersByUser(user?.id);
+  const updateProfile = useUpdateProfile();
 
-  const onFinish = (values) => {
-    console.log("Form values:", values);
+  const onFinish = async (values) => {
+    try {
+      await updateProfile.mutateAsync(values);
+      message.success("Профиль успешно обновлен");
+    } catch (error) {
+      message.error("Ошибка при обновлении профиля");
+    }
+  };
+
+  const getOrderStatusColor = (status) => {
+    switch (status) {
+      case "pending":
+        return "processing";
+      case "completed":
+        return "success";
+      case "cancelled":
+        return "error";
+      default:
+        return "default";
+    }
+  };
+
+  const getOrderStatusText = (status) => {
+    switch (status) {
+      case "pending":
+        return "В обработке";
+      case "completed":
+        return "Завершен";
+      case "cancelled":
+        return "Отменен";
+      default:
+        return status;
+    }
   };
 
   return (
@@ -36,16 +75,16 @@ export default function ProfilePage() {
       <div className='profile-container'>
         <Row gutter={[24, 24]}>
           <Col xs={24} md={24}>
-            <Card title='Personal Information' className='info-card'>
+            <Card title='Личная информация' className='info-card'>
               <Form
                 form={form}
                 layout='vertical'
                 onFinish={onFinish}
                 initialValues={{
-                  name: "John Doe",
-                  email: "john.doe@example.com",
-                  phone: "+1 234 567 890",
-                  address: "123 Main St, City, Country",
+                  name: user?.name || "",
+                  email: user?.email || "",
+                  phone: user?.phone || "",
+                  address: user?.address || "",
                 }}
               >
                 <Row gutter={16}>
@@ -122,42 +161,56 @@ export default function ProfilePage() {
               </Form>
             </Card>
 
-            <Card title='Recent Orders' className='orders-card'>
-              <Space direction='vertical' style={{ width: "100%" }}>
-                <Card className='order-item'>
-                  <Row justify='space-between' align='middle'>
-                    <Col>
-                      <Space direction='vertical'>
-                        <span className='order-id'>Order #12345</span>
-                        <span className='order-date'>Jan 15, 2024</span>
-                      </Space>
-                    </Col>
-                    <Col>
-                      <Tag color='success'>Delivered</Tag>
-                    </Col>
-                    <Col>
-                      <span className='order-total'>$199.99</span>
-                    </Col>
-                  </Row>
-                </Card>
-
-                <Card className='order-item'>
-                  <Row justify='space-between' align='middle'>
-                    <Col>
-                      <Space direction='vertical'>
-                        <span className='order-id'>Order #12344</span>
-                        <span className='order-date'>Jan 10, 2024</span>
-                      </Space>
-                    </Col>
-                    <Col>
-                      <Tag color='processing'>Processing</Tag>
-                    </Col>
-                    <Col>
-                      <span className='order-total'>$89.99</span>
-                    </Col>
-                  </Row>
-                </Card>
-              </Space>
+            <Card title='История заказов' className='orders-card'>
+              {isLoading ? (
+                <div style={{ textAlign: "center", padding: "20px" }}>
+                  <Spin size='large' />
+                </div>
+              ) : orders?.length > 0 ? (
+                <Space direction='vertical' style={{ width: "100%" }}>
+                  {orders.map((order) => (
+                    <Card key={order.id} className='order-item'>
+                      <Row justify='space-between' align='middle'>
+                        <Col>
+                          <Space direction='vertical'>
+                            <Image
+                              width={100}
+                              height={100}
+                              src={order.Product?.image}
+                              alt={order.Product?.name}
+                              style={{ objectFit: "cover" }}
+                            />
+                            <span className='order-id'>Заказ #{order.id}</span>
+                            <span className='order-date'>
+                              {new Date(order.orderDate).toLocaleDateString()}
+                            </span>
+                            <span className='product-name'>
+                              {order.Product?.name}
+                            </span>
+                            <span className='quantity'>
+                              Количество: {order.quantity}
+                            </span>
+                          </Space>
+                        </Col>
+                        <Col>
+                          <Tag color={getOrderStatusColor(order.status)}>
+                            {getOrderStatusText(order.status)}
+                          </Tag>
+                        </Col>
+                        <Col>
+                          <span className='order-total'>
+                            {(order?.totalPrice || 0).toFixed(2)} ₽
+                          </span>
+                        </Col>
+                      </Row>
+                    </Card>
+                  ))}
+                </Space>
+              ) : (
+                <div style={{ textAlign: "center", padding: "20px" }}>
+                  <p>У вас пока нет заказов</p>
+                </div>
+              )}
             </Card>
           </Col>
         </Row>

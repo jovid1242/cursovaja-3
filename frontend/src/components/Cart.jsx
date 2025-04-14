@@ -1,13 +1,16 @@
 import React from "react";
 import { Button, Drawer, Typography, Space, Spin, message } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import { useCart, useDeleteCartItem } from "../hooks/useApi";
+import { useCart, useDeleteCartItem, useCreateOrder } from "../hooks/useApi";
+import { useNavigate } from "react-router-dom";
 
 const Cart = ({ visible, onVisibleChange }) => {
   const { data: cartItems, isLoading } = useCart({
     enabled: visible,
   });
   const deleteCartItem = useDeleteCartItem();
+  const createOrder = useCreateOrder();
+  const navigate = useNavigate();
 
   const onClose = () => {
     onVisibleChange(false);
@@ -16,9 +19,20 @@ const Cart = ({ visible, onVisibleChange }) => {
   const handleDeleteItem = async (cartItemId) => {
     try {
       await deleteCartItem.mutateAsync(cartItemId);
-      message.success("Item removed from cart");
+      message.success("Товар удален из корзины");
     } catch (error) {
-      message.error("Failed to remove item from cart");
+      message.error("Не удалось удалить товар из корзины");
+    }
+  };
+
+  const handleCheckout = async () => {
+    try {
+      await createOrder.mutateAsync();
+      message.success("Заказ успешно оформлен");
+      onClose();
+      navigate("/profile");
+    } catch (error) {
+      message.error("Не удалось оформить заказ");
     }
   };
 
@@ -84,7 +98,7 @@ const Cart = ({ visible, onVisibleChange }) => {
                       />
                     </div>
                     <Typography.Text>
-                      {item.quantity} × ${item.Product.price.toFixed(2)}
+                      {item.quantity} × {item.Product.price.toFixed(2)} ₽
                     </Typography.Text>
                   </div>
                 </div>
@@ -112,7 +126,13 @@ const Cart = ({ visible, onVisibleChange }) => {
               </div>
 
               <Space direction='vertical' style={{ width: "100%" }}>
-                <Button type='primary' block size='large'>
+                <Button
+                  type='primary'
+                  block
+                  size='large'
+                  onClick={handleCheckout}
+                  loading={createOrder.isLoading}
+                >
                   Оформить заказ
                 </Button>
               </Space>

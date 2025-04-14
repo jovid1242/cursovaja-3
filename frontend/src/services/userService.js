@@ -14,4 +14,8 @@ export const userService = {
     const response = await axiosInstance.delete(`/users/${id}`);
     return response.data;
   },
+  updateProfile: async (data) => {
+    const response = await axiosInstance.put("/users/profile", data);
+    return response.data;
+  },
 };

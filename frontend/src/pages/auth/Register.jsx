@@ -5,6 +5,7 @@ import {
   MailOutlined,
   LockOutlined,
   PhoneOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegister } from "../../hooks/useApi";
@@ -27,7 +28,11 @@ export default function Register() {
             authLogin(response.user);
             message.success("Регистрация успешна!");
             setTimeout(() => {
-              navigate("/", { replace: true });
+              if (response?.user?.role === "admin") {
+                navigate("/admin", { replace: true });
+              } else {
+                navigate("/", { replace: true });
+              }
             }, 500);
           } else {
             message.error("Ошибка: данные пользователя не получены");
@@ -40,7 +45,9 @@ export default function Register() {
         },
       });
     } catch (error) {
-      message.error("Произошла ошибка при регистрации");
+      message.error(
+        error.response?.data?.message || "Произошла ошибка при регистрации"
+      );
     }
   };
 
@@ -115,6 +122,22 @@ export default function Register() {
               <Input
                 prefix={<PhoneOutlined />}
                 placeholder='Номер телефона'
+                size='large'
+              />
+            </Form.Item>
+
+            <Form.Item
+              name='address'
+              rules={[
+                {
+                  required: true,
+                  message: "Пожалуйста, введите адрес",
+                },
+              ]}
+            >
+              <Input
+                prefix={<HomeOutlined />}
+                placeholder='Адрес'
                 size='large'
               />
             </Form.Item>

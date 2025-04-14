@@ -10,40 +10,55 @@ const { Title, Text } = Typography;
 
 export default function Login() {
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
   const { mutate: login, isLoading } = useLogin();
   const { login: authLogin } = useAuth();
 
   const onFinish = async (values) => {
     try {
-      await login(values, {
+      const response = await login(values, {
+        onError: (error) => {
+          if (error.response?.status === 401) {
+            messageApi.error({
+              content: "Неверный email или пароль",
+              duration: 2,
+            });
+          } else {
+            messageApi.error({
+              content:
+                error.response?.data?.message || "Произошла ошибка при входе",
+              duration: 2,
+            });
+          }
+        },
         onSuccess: (response) => {
-          if (response?.token && response?.user) {
-            localStorage.setItem("token", response.token);
-            authLogin(response.user);
-            message.success("Успешный вход!");
+          if (response?.data?.token && response?.data?.user) {
+            localStorage.setItem("token", response.data.token);
+            authLogin(response.data.user);
+            messageApi.success({
+              content: "Успешный вход!",
+              duration: 2,
+            });
+
             setTimeout(() => {
-              if (response?.user?.role === "admin") {
+              if (response.data.user.role === "admin") {
                 navigate("/admin", { replace: true });
               } else {
                 navigate("/", { replace: true });
               }
             }, 500);
-          } else {
-            message.error("Ошибка: данные пользователя не получены");
           }
-        },
-        onError: (error) => {
-          message.error(error.response?.data?.message || "Ошибка при входе");
         },
       });
     } catch (error) {
-      message.error("Произошла ошибка при входе");
+      console.error("Login error:", error);
     }
   };
 
   return (
     <div className='Login'>
       <div className='container'>
+        {contextHolder}
         <div className='Login-wrapper'>
           <Title level={2}>Вход</Title>
           <Form

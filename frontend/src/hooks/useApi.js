@@ -5,12 +5,18 @@ import {
   categoryService,
   userService,
   cartService,
+  orderService,
 } from "../services";
 
 // Auth hooks
 export const useLogin = () => {
   return useMutation({
     mutationFn: authService.login,
+    onError: (error) => {
+      // Ошибка уже обрабатывается в компоненте
+      console.error("Login error:", error);
+    },
+    retry: false, // Отключаем повторные попытки при ошибке
   });
 };
 
@@ -142,6 +148,16 @@ export const useDeleteUser = () => {
   });
 };
 
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userService.updateProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+};
+
 // Cart hooks
 export const useCart = () => {
   return useQuery({
@@ -168,5 +184,24 @@ export const useDeleteCartItem = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
+  });
+};
+
+// Order hooks
+export const useCreateOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: orderService.createOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+};
+
+export const useOrdersByUser = (userId) => {
+  return useQuery({
+    queryKey: ["orders", userId],
+    queryFn: () => orderService.getOrdersByUser(userId),
+    enabled: !!userId,
   });
 };

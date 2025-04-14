@@ -28,6 +28,18 @@ module.exports = {
         type: Sequelize.ENUM("user", "admin"),
         defaultValue: "user",
       },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      phone: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      address: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

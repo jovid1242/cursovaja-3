@@ -3,7 +3,7 @@ const userService = require("../services/userService");
 class UserController {
   async register(req, res) {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, name, phone, address } = req.body;
 
       // Проверяем наличие обязательных полей
       if (!username || !email || !password) {
@@ -12,7 +12,14 @@ class UserController {
         });
       }
 
-      const result = await userService.register({ username, email, password });
+      const result = await userService.register({
+        username,
+        email,
+        password,
+        name,
+        phone,
+        address,
+      });
       res.status(201).json(result);
     } catch (error) {
       res.status(400).json({ message: error.message });
@@ -23,17 +30,30 @@ class UserController {
     try {
       const { email, password } = req.body;
 
-      // Проверяем наличие обязательных полей
       if (!email || !password) {
         return res.status(400).json({
+          success: false,
           message: "Email and password are required",
         });
       }
 
       const result = await userService.login(email, password);
-      res.json(result);
+      res.json({
+        success: true,
+        data: result,
+      });
     } catch (error) {
-      res.status(401).json({ message: error.message });
+      console.error("Login error:", error);
+      res.status(401).json({
+        success: false,
+        message: error.message,
+        error: {
+          name: error.name,
+          message: error.message,
+          stack:
+            process.env.NODE_ENV === "development" ? error.stack : undefined,
+        },
+      });
     }
   }
 

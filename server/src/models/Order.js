@@ -19,7 +19,34 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
+    productId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Products",
+        key: "id",
+      },
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
   });
+
+  Order.associate = (models) => {
+    Order.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "User",
+    });
+    Order.belongsTo(models.Product, {
+      foreignKey: "productId",
+      as: "Product",
+    });
+  };
 
   return Order;
 };

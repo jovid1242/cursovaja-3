@@ -29,7 +29,8 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      // Instead of redirecting here, we'll let the components handle the navigation
+      // This prevents the page refresh issue
     }
     return Promise.reject(error);
   }
