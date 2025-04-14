@@ -8,7 +8,6 @@ import HomePage from "../pages/user/HomePage";
 import ProductsPage from "../pages/user/ProductsPage";
 import CartPage from "../pages/user/CartPage";
 import AdminHomePage from "../pages/admin/HomePage";
-import AdminProductsPage from "../pages/admin/ProductPage";
 import ProductPage from "../pages/user/ProductPage";
 import ProfilePage from "../pages/user/ProfilePage";
 
@@ -60,14 +59,6 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute roles={["admin"]}>
             <AdminHomePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path='/admin/products'
-        element={
-          <ProtectedRoute roles={["admin"]}>
-            <AdminProductsPage />
           </ProtectedRoute>
         }
       />

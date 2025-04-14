@@ -106,6 +106,42 @@ class UserService {
       throw new Error(error.message);
     }
   }
+
+  async getUsers() {
+    try {
+      const users = await User.findAll();
+      return users;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async updateUserStatus(id, userData) {
+    try {
+      const user = await User.findByPk(id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      user.status = userData.status;
+      await user.save();
+      return user;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async deleteUser(id) {
+    try {
+      const user = await User.findByPk(id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      await user.destroy();
+      return { message: "User deleted successfully" };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
 
 module.exports = new UserService();

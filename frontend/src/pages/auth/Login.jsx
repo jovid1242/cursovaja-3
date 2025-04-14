@@ -22,7 +22,11 @@ export default function Login() {
             authLogin(response.user);
             message.success("Успешный вход!");
             setTimeout(() => {
-              navigate("/", { replace: true });
+              if (response?.user?.role === "admin") {
+                navigate("/admin", { replace: true });
+              } else {
+                navigate("/", { replace: true });
+              }
             }, 500);
           } else {
             message.error("Ошибка: данные пользователя не получены");

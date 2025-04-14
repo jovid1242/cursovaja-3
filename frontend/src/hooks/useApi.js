@@ -1,5 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { authService, productService, categoryService } from "../services";
+import {
+  authService,
+  productService,
+  categoryService,
+  userService,
+} from "../services";
 
 // Auth hooks
 export const useLogin = () => {
@@ -113,5 +118,24 @@ export const useDeleteCategory = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
+  });
+};
+
+export const useGetUsers = () => {
+  return useQuery({
+    queryKey: ["users"],
+    queryFn: () => userService.getUsers(),
+  });
+};
+
+export const useUpdateStatusUser = () => {
+  return useMutation({
+    mutationFn: userService.updateStatusUser,
+  });
+};
+
+export const useDeleteUser = () => {
+  return useMutation({
+    mutationFn: userService.deleteUser,
   });
 };
