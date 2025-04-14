@@ -74,6 +74,7 @@ const UsersTable = ({ users, isLoading }) => {
       pagination={{ pageSize: 10 }}
       style={{ marginTop: "16px" }}
       loading={isLoading}
+      scroll={{ x: 890 }}
     />
   );
 };

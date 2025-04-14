@@ -154,6 +154,7 @@ const ProductsTable = ({ products, total, isLoading }) => {
         style={{ marginTop: "16px" }}
         loading={isLoading}
         rowKey={(record) => record.id}
+        scroll={{ x: 890 }}
       />
       <Modal
         title='Подтверждение удаления'
