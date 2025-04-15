@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Table, Button, Select, Space, Modal, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useUpdateStatusUser, useDeleteUser } from "../../hooks/useApi";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { Option } = Select;
 
@@ -10,11 +11,13 @@ const UsersTable = ({ users, isLoading }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const updateStatusUser = useUpdateStatusUser();
   const deleteUser = useDeleteUser();
+  const queryClient = useQueryClient();
 
   const handleRoleChange = async (record, newRole) => {
     try {
       await updateStatusUser.mutateAsync({ id: record.id, status: newRole });
       message.success("Роль пользователя успешно обновлена");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     } catch (error) {
       message.error("Ошибка при обновлении роли пользователя");
     }
@@ -31,6 +34,7 @@ const UsersTable = ({ users, isLoading }) => {
       message.success("Пользователь успешно удален");
       setDeleteModalVisible(false);
       setSelectedUser(null);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     } catch (error) {
       message.error("Ошибка при удалении пользователя");
     }
