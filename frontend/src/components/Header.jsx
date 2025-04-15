@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Badge } from "antd";
 import {
   SearchOutlined,
@@ -13,23 +13,38 @@ import { Link } from "react-router-dom";
 import "../styles/Header.scss";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useCategories } from "../hooks/useApi";
+import { useCategories, useCart } from "../hooks/useApi";
 import Cart from "./Cart";
+
 export default function Header() {
   const [visible, setVisible] = useState(false);
+  const [isFixed, setIsFixed] = useState(false);
   const navigate = useNavigate();
   const { logout: authLogout, user } = useAuth();
   const { data: categories } = useCategories({ enabled: true });
+  const { data: cartItems } = useCart();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsFixed(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = () => {
     authLogout();
     navigate("/login");
   };
 
+  const cartCount =
+    cartItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
   return (
-    <header className='header container'>
+    <header className={`header ${isFixed ? "fixed" : ""}`}>
       <Cart visible={visible} onVisibleChange={(e) => setVisible(e)} />
-      <div className='header__container'>
+      <div className='header__container container'>
         <Link to='/' className='header__logo'>
           Mii
         </Link>
@@ -61,7 +76,7 @@ export default function Header() {
           )}
           {user && (
             <Badge
-              count={0}
+              count={cartCount}
               className='cart-badge'
               onClick={() => setVisible(true)}
             >

@@ -2,6 +2,10 @@
   text-decoration: none;
   color: inherit;
   display: block;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .product-card {
@@ -27,7 +31,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f2f2f2;
+    // background: #f2f2f2;
 
     img {
       max-width: 100%;
@@ -55,8 +59,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 0 10px;
-    width: fit-content;
+    width: 100%;
 
     .product-name {
       margin: 0 0 12px;

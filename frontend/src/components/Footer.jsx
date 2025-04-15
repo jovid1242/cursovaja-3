@@ -20,19 +20,16 @@ export default function Footer() {
             <h3>Категории</h3>
             <ul>
               <li>
-                <Link to='/products?categoryId=31'>Холодильники</Link>
+                <Link to='/products?categoryId=1'>Холодильники</Link>
               </li>
               <li>
-                <Link to='/products?categoryId=32'>Стиральные машины</Link>
+                <Link to='/products?categoryId=2'>Стиральные машины</Link>
               </li>
               <li>
-                <Link to='/products?categoryId=33'>Телевизоры</Link>
+                <Link to='/products?categoryId=3'>Телевизоры</Link>
               </li>
               <li>
-                <Link to='/products?categoryId=34'>Стиральные машины</Link>
-              </li>
-              <li>
-                <Link to='/products?categoryId=35'>Телевизоры</Link>
+                <Link to='/products?categoryId=4'>Стиральные машины</Link>
               </li>
             </ul>
           </div>

@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../../styles/pages/ProductPage.scss";
 import Cart from "../../components/Cart";
-import { useProduct, useAddToCart } from "../../hooks/useApi";
+import { useProduct, useAddToCart, useProducts } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
+import { Spin } from "antd";
+import ProductCard from "../../components/ProductCard";
 
 const ProductPage = () => {
   const [visible, setVisible] = useState(false);
@@ -15,7 +17,26 @@ const ProductPage = () => {
   const { data: product, isLoading, error: productError } = useProduct(id);
   const addToCartMutation = useAddToCart();
 
-  if (isLoading) return <div>Loading...</div>;
+  // Get similar products from the same category
+  const { data: similarProducts, isLoading: similarLoading } = useProducts({
+    categoryId: product?.Category?.id,
+    limit: 4,
+    exclude_id: id,
+  });
+
+  if (isLoading || similarLoading)
+    return (
+      <div
+        style={{
+          height: "60vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Spin size='large' />
+      </div>
+    );
   if (productError) return <div>Error loading product</div>;
   if (!product) return <div>Product not found</div>;
 
@@ -117,6 +138,18 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Similar Products Section */}
+      {similarProducts?.rows?.length > 0 && (
+        <div className='similar-products'>
+          <h2>Похожие товары</h2>
+          <div className='similar-products-grid'>
+            {similarProducts.rows.map((similarProduct) => (
+              <ProductCard key={similarProduct.id} product={similarProduct} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
