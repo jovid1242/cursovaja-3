@@ -6,7 +6,6 @@ import { AuthProvider } from "./context/AuthContext";
 import AppRoutes from "./routes";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-// Styles
 import "./styles/main.scss";
 
 const queryClient = new QueryClient({
