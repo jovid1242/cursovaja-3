@@ -17,7 +17,13 @@ import {
   useCategories,
 } from "../../hooks/useApi";
 
-const ProductsTable = ({ products, total, isLoading }) => {
+const ProductsTable = ({
+  products,
+  total,
+  isLoading,
+  pagination,
+  onTableChange,
+}) => {
   const deleteProduct = useDeleteProduct();
   const updateProduct = useUpdateProduct();
   const { data: categories } = useCategories({ enabled: true });
@@ -150,7 +156,14 @@ const ProductsTable = ({ products, total, isLoading }) => {
       <Table
         columns={columns}
         dataSource={products}
-        pagination={{ pageSize: 10 }}
+        pagination={{
+          ...pagination,
+          total: total,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total) => `Всего ${total} товаров`,
+        }}
+        onChange={onTableChange}
         style={{ marginTop: "16px" }}
         loading={isLoading}
         rowKey={(record) => record.id}

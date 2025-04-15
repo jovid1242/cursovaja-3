@@ -26,7 +26,15 @@ const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("products");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const { data: productsData, isLoading: isProductsLoading } = useProducts();
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const { data: productsData, isLoading: isProductsLoading } = useProducts({
+    page: pagination.current,
+    limit: pagination.pageSize,
+  });
   const { data: usersData, isLoading: isUsersLoading } = useGetUsers();
   const { data: categoriesData } = useCategories({
     enabled: isModalVisible,
@@ -49,6 +57,10 @@ const AdminPage = () => {
     }
   };
 
+  const handleTableChange = (pagination) => {
+    setPagination(pagination);
+  };
+
   const items = [
     {
       key: "products",
@@ -58,6 +70,8 @@ const AdminPage = () => {
           products={products}
           total={total}
           isLoading={isProductsLoading}
+          pagination={pagination}
+          onTableChange={handleTableChange}
         />
       ),
     },
