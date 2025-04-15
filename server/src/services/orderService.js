@@ -58,9 +58,6 @@ class OrderService {
           orderDate: new Date(),
         };
 
-        console.log("Creating order with data:", orderData);
-
-        // Update product stock
         await Product.update(
           { stock: cartItem.Product.stock - cartItem.quantity },
           { where: { id: cartItem.ProductId } }

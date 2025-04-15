@@ -5,7 +5,6 @@ class UserController {
     try {
       const { username, email, password, name, phone, address } = req.body;
 
-      // Проверяем наличие обязательных полей
       if (!username || !email || !password) {
         return res.status(400).json({
           message: "Username, email and password are required",

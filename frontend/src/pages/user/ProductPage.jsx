@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../../styles/pages/ProductPage.scss";
 import Cart from "../../components/Cart";
 import { useProduct, useAddToCart } from "../../hooks/useApi";
+import { useAuth } from "../../context/AuthContext";
 
 const ProductPage = () => {
   const [visible, setVisible] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState(null);
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: product, isLoading, error: productError } = useProduct(id);
   const addToCartMutation = useAddToCart();
 
@@ -29,6 +32,11 @@ const ProductPage = () => {
   };
 
   const handleAddToCart = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     try {
       if (quantity < 1 || quantity > 100) {
         setError("Quantity must be between 1 and 100");

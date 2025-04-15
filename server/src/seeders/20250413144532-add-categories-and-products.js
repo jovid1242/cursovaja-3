@@ -6,7 +6,6 @@ const { Category, Product } = require("../models");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     try {
-      // Создаем категории
       const categories = await Category.bulkCreate([
         {
           name: "Холодильники",
@@ -31,9 +30,7 @@ module.exports = {
         },
       ]);
 
-      // Создаем продукты
       await Product.bulkCreate([
-        // Холодильники
         {
           name: "Samsung RB37A52N0SA",
           description: "Двухкамерный холодильник с No Frost, 367 л",
@@ -80,7 +77,6 @@ module.exports = {
           stock: 7,
           categoryId: categories[0].id,
         },
-        // Стиральные машины
         {
           name: "Bosch WAN28263BY",
           description: "Стиральная машина с фронтальной загрузкой, 8 кг",
@@ -127,7 +123,6 @@ module.exports = {
           stock: 12,
           categoryId: categories[1].id,
         },
-        // Телевизоры
         {
           name: "Sony KD-55X85TJ",
           description: '55" 4K HDR LED телевизор с Android TV',
@@ -173,7 +168,6 @@ module.exports = {
           stock: 6,
           categoryId: categories[2].id,
         },
-        // Пылесосы
         {
           name: "Dyson V15 Detect",
           description: "Беспроводной пылесос с лазерным датчиком пыли",
@@ -219,7 +213,6 @@ module.exports = {
           stock: 5,
           categoryId: categories[3].id,
         },
-        // Микроволновые печи
         {
           name: "Panasonic NN-GT261W",
           description: "Микроволновая печь с грилем, 20л",

@@ -8,15 +8,13 @@ import {
   orderService,
 } from "../services";
 
-// Auth hooks
 export const useLogin = () => {
   return useMutation({
     mutationFn: authService.login,
     onError: (error) => {
-      // Ошибка уже обрабатывается в компоненте
       console.error("Login error:", error);
     },
-    retry: false, // Отключаем повторные попытки при ошибке
+    retry: false,
   });
 };
 
@@ -34,7 +32,6 @@ export const useCurrentUser = () => {
   });
 };
 
-// Product hooks
 export const useProducts = (params) => {
   return useQuery({
     queryKey: ["products", params],
@@ -81,7 +78,6 @@ export const useDeleteProduct = () => {
   });
 };
 
-// Category hooks
 export const useCategories = (params) => {
   return useQuery({
     queryKey: ["categories", params.enabled],
@@ -158,7 +154,6 @@ export const useUpdateProfile = () => {
   });
 };
 
-// Cart hooks
 export const useCart = () => {
   return useQuery({
     queryKey: ["cart"],
@@ -187,7 +182,6 @@ export const useDeleteCartItem = () => {
   });
 };
 
-// Order hooks
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({

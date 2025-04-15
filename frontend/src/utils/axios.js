@@ -9,7 +9,6 @@ const axiosInstance = axios.create({
   },
 });
 
-// Add a request interceptor to add the token to every request
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -23,14 +22,11 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Add a response interceptor to handle token expiration
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      // Instead of redirecting here, we'll let the components handle the navigation
-      // This prevents the page refresh issue
     }
     return Promise.reject(error);
   }

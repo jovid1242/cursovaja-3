@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const { Option } = Select;
 
 const UsersTable = ({ users, isLoading }) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const updateStatusUser = useUpdateStatusUser();
@@ -16,10 +17,10 @@ const UsersTable = ({ users, isLoading }) => {
   const handleRoleChange = async (record, newRole) => {
     try {
       await updateStatusUser.mutateAsync({ id: record.id, status: newRole });
-      message.success("Роль пользователя успешно обновлена");
+      messageApi.success("Роль пользователя успешно обновлена");
       queryClient.invalidateQueries({ queryKey: ["users"] });
     } catch (error) {
-      message.error("Ошибка при обновлении роли пользователя");
+      messageApi.error("Ошибка при обновлении роли пользователя");
     }
   };
 
@@ -31,12 +32,12 @@ const UsersTable = ({ users, isLoading }) => {
   const handleDeleteConfirm = async () => {
     try {
       await deleteUser.mutateAsync(selectedUser.id);
-      message.success("Пользователь успешно удален");
+      messageApi.success("Пользователь успешно удален");
       setDeleteModalVisible(false);
       setSelectedUser(null);
       queryClient.invalidateQueries({ queryKey: ["users"] });
     } catch (error) {
-      message.error("Ошибка при удалении пользователя");
+      messageApi.error("Ошибка при удалении пользователя");
     }
   };
 
@@ -94,6 +95,7 @@ const UsersTable = ({ users, isLoading }) => {
 
   return (
     <>
+      {contextHolder}
       <Table
         columns={columns}
         dataSource={users}

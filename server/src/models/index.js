@@ -13,7 +13,6 @@ const Product = require("./Product")(sequelize);
 const Cart = require("./Cart")(sequelize);
 const Order = require("./Order")(sequelize);
 
-// Define relationships
 Product.belongsTo(Category);
 Category.hasMany(Product);
 

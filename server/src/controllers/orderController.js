@@ -3,7 +3,7 @@ const orderService = require("../services/orderService");
 class OrderController {
   async createOrderFromCart(req, res) {
     try {
-      const userId = req.user.id; // Assuming user ID is available from auth middleware
+      const userId = req.user.id;
       const orders = await orderService.createOrderFromCart(userId);
       res.status(201).json(orders);
     } catch (error) {

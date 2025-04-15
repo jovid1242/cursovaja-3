@@ -23,6 +23,7 @@ import UsersTable from "../../components/admin/UsersTable";
 const { Content } = Layout;
 
 const AdminPage = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [activeTab, setActiveTab] = useState("products");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -49,11 +50,11 @@ const AdminPage = () => {
   const handleCreateProduct = async (values) => {
     try {
       await createProduct.mutateAsync(values);
-      message.success("Товар успешно создан");
+      messageApi.success("Товар успешно создан");
       setIsModalVisible(false);
       form.resetFields();
     } catch (error) {
-      message.error("Ошибка при создании товара");
+      messageApi.error("Ошибка при создании товара");
     }
   };
 
@@ -84,6 +85,7 @@ const AdminPage = () => {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
+      {contextHolder}
       <Content style={{ padding: "24px" }}>
         <div
           style={{

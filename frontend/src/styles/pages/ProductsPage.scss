@@ -68,7 +68,6 @@
   }
 }
 
-// Tablet styles
 @media screen and (max-width: 1024px) {
   .ProductsPage {
     &-wrapper {
@@ -87,7 +86,6 @@
   }
 }
 
-// Mobile styles
 @media screen and (max-width: 768px) {
   .ProductsPage {
     padding-top: 55px;
@@ -123,7 +121,6 @@
   }
 }
 
-// Small mobile styles
 @media screen and (max-width: 480px) {
   .ProductsPage {
     .ant-select-selector3 {
