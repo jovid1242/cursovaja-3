@@ -67,7 +67,7 @@ export default function ProductsPage() {
       <div className='container'>
         <div className='ProductsPage-wrapper'>
           <div className='ProductsPage-wrapper__left'>
-            <h2>Products</h2>
+            <h2>Фильтры</h2>
             <div className='filter-section'>
               <Form
                 form={form}
