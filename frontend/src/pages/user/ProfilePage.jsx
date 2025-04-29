@@ -46,7 +46,7 @@ export default function ProfilePage() {
 
   const getOrderStatusColor = (status) => {
     switch (status) {
-      case "pending":
+      case "processing":
         return "processing";
       case "completed":
         return "success";
@@ -60,11 +60,11 @@ export default function ProfilePage() {
   const getOrderStatusText = (status) => {
     switch (status) {
       case "pending":
-        return "В обработке";
+        return "В ожидании";
       case "completed":
         return "Завершен";
-      case "cancelled":
-        return "Отменен";
+      case "processing":
+        return "В обработке";
       default:
         return status;
     }
