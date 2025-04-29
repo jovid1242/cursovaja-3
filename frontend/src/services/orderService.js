@@ -1,8 +1,8 @@
 import axiosInstance from "../utils/axios";
 
 export const orderService = {
-  createOrder: async () => {
-    const response = await axiosInstance.post(`/orders/from-cart`);
+  createOrder: async (paymentInfo) => {
+    const response = await axiosInstance.post(`/orders/from-cart`, paymentInfo);
     return response.data;
   },
 

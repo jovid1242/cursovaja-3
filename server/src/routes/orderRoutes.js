@@ -1,16 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const orderController = require("../controllers/orderController");
-const { auth } = require("../middleware/auth");
+const { auth, isAdmin } = require("../middleware/auth");
 
-router.use(auth);
+// Создание заказа из корзины
+router.post("/from-cart", auth, orderController.createOrderFromCart);
 
-router.post("/from-cart", orderController.createOrderFromCart);
+// Получение всех заказов (только для админа)
+router.get("/", auth, isAdmin, orderController.getOrders);
 
-router.get("/", orderController.getAllOrders);
-router.get("/user/:userId", orderController.getOrdersByUser);
-router.get("/:id", orderController.getOrder);
-router.put("/:id", orderController.updateOrder);
-router.delete("/:id", orderController.deleteOrder);
+// Получение заказа по ID
+router.get("/:id", auth, orderController.getOrderById);
+
+// Получение заказов пользователя
+router.get("/user/:userId", auth, orderController.getOrdersByUser);
+
+// Обновление заказа (только для админа)
+router.put("/:id", auth, isAdmin, orderController.updateOrder);
+
+// Удаление заказа (только для админа)
+router.delete("/:id", auth, isAdmin, orderController.deleteOrder);
 
 module.exports = router;

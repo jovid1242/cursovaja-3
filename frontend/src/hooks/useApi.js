@@ -185,9 +185,10 @@ export const useDeleteCartItem = () => {
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: orderService.createOrder,
+    mutationFn: (paymentInfo) => orderService.createOrder(paymentInfo),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 };
@@ -197,5 +198,32 @@ export const useOrdersByUser = (userId) => {
     queryKey: ["orders", userId],
     queryFn: () => orderService.getOrdersByUser(userId),
     enabled: !!userId,
+  });
+};
+
+export const useOrders = (params) => {
+  return useQuery({
+    queryKey: ["orders", params],
+    queryFn: () => orderService.getOrders(params),
+  });
+};
+
+export const useUpdateOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }) => orderService.updateOrder(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+  });
+};
+
+export const useDeleteOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => orderService.deleteOrder(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
   });
 };

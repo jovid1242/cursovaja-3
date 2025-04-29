@@ -26,14 +26,14 @@ class ProductService {
       where,
       limit,
       offset,
-      include: [{ model: Category }],
+      include: [{ model: Category, as: "Category" }],
       order: [["createdAt", "DESC"]],
     });
   }
 
   async getProductById(id) {
     const product = await Product.findByPk(id, {
-      include: [{ model: Category }],
+      include: [{ model: Category, as: "Category" }],
     });
     if (!product) throw new Error("Product not found");
     return product;

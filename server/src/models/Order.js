@@ -19,6 +19,27 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
+    status: {
+      type: DataTypes.ENUM("pending", "processing", "completed"),
+      defaultValue: "pending",
+      allowNull: false,
+    },
+    cardNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    cardHolder: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    cardExpiry: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    shippingAddress: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     productId: {
       type: DataTypes.INTEGER,
       allowNull: false,

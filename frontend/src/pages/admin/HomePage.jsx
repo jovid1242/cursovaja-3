@@ -16,9 +16,11 @@ import {
   useGetUsers,
   useCreateProduct,
   useCategories,
+  useOrders,
 } from "../../hooks/useApi";
 import ProductsTable from "../../components/admin/ProductsTable";
 import UsersTable from "../../components/admin/UsersTable";
+import OrdersTable from "../../components/admin/OrdersTable";
 
 const { Content } = Layout;
 
@@ -40,12 +42,18 @@ const AdminPage = () => {
   const { data: categoriesData } = useCategories({
     enabled: isModalVisible,
   });
+  const { data: ordersData, isLoading: isOrdersLoading } = useOrders({
+    page: pagination.current,
+    limit: pagination.pageSize,
+  });
   const createProduct = useCreateProduct();
 
   const products = productsData?.rows || [];
   const total = productsData?.count || 0;
   const users = usersData || [];
   const categories = categoriesData || [];
+  const orders = ordersData?.rows || [];
+  const ordersTotal = ordersData?.count || 0;
 
   const handleCreateProduct = async (values) => {
     try {
@@ -71,6 +79,19 @@ const AdminPage = () => {
           products={products}
           total={total}
           isLoading={isProductsLoading}
+          pagination={pagination}
+          onTableChange={handleTableChange}
+        />
+      ),
+    },
+    {
+      key: "orders",
+      label: "Заказы",
+      children: (
+        <OrdersTable
+          orders={orders}
+          total={ordersTotal}
+          isLoading={isOrdersLoading}
           pagination={pagination}
           onTableChange={handleTableChange}
         />

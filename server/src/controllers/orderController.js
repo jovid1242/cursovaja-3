@@ -4,7 +4,25 @@ class OrderController {
   async createOrderFromCart(req, res) {
     try {
       const userId = req.user.id;
-      const orders = await orderService.createOrderFromCart(userId);
+      const { cardNumber, cardHolder, cardExpiry, shippingAddress } = req.body;
+
+      if (!cardNumber || !cardHolder || !cardExpiry || !shippingAddress) {
+        return res
+          .status(400)
+          .json({ error: "Missing payment or shipping information" });
+      }
+
+      const paymentInfo = {
+        cardNumber,
+        cardHolder,
+        cardExpiry,
+        shippingAddress,
+      };
+
+      const orders = await orderService.createOrderFromCart(
+        userId,
+        paymentInfo
+      );
       res.status(201).json(orders);
     } catch (error) {
       if (error.message === "Cart is empty") {
@@ -14,22 +32,23 @@ class OrderController {
     }
   }
 
-  async getOrder(req, res) {
+  async getOrders(req, res) {
+    try {
+      const { page = 1, limit = 10 } = req.query;
+      const orders = await orderService.getOrders({ page, limit });
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getOrderById(req, res) {
     try {
       const order = await orderService.getOrderById(req.params.id);
       if (!order) {
         return res.status(404).json({ error: "Order not found" });
       }
       res.json(order);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async getAllOrders(req, res) {
-    try {
-      const orders = await orderService.getAllOrders();
-      res.json(orders);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

@@ -1,7 +1,8 @@
 const { Order, User, Product, Cart } = require("../models");
+const { Op } = require("sequelize");
 
 class OrderService {
-  async createOrderFromCart(userId) {
+  async createOrderFromCart(userId, paymentInfo) {
     const cartItems = await Cart.findAll({
       where: { userId },
       include: [{ model: Product, as: "Product" }],
@@ -17,7 +18,7 @@ class OrderService {
       cartItems.map(async (cartItem) => {
         console.log("Processing cart item:", {
           id: cartItem.id,
-          productId: cartItem.ProductId,
+          productId: cartItem.productId,
           quantity: cartItem.quantity,
           product: cartItem.Product
             ? {
@@ -28,7 +29,7 @@ class OrderService {
             : null,
         });
 
-        if (!cartItem.ProductId) {
+        if (!cartItem.productId) {
           console.error("Missing productId in cart item:", cartItem);
           throw new Error("Missing productId in cart item");
         }
@@ -52,15 +53,20 @@ class OrderService {
 
         const orderData = {
           userId: userId,
-          productId: cartItem.ProductId,
+          productId: cartItem.productId,
           quantity: cartItem.quantity,
           totalPrice: cartItem.quantity * cartItem.Product.price,
           orderDate: new Date(),
+          status: "pending",
+          cardNumber: paymentInfo.cardNumber,
+          cardHolder: paymentInfo.cardHolder,
+          cardExpiry: paymentInfo.cardExpiry,
+          shippingAddress: paymentInfo.shippingAddress,
         };
 
         await Product.update(
           { stock: cartItem.Product.stock - cartItem.quantity },
-          { where: { id: cartItem.ProductId } }
+          { where: { id: cartItem.productId } }
         );
 
         const order = await Order.create(orderData);
@@ -72,17 +78,21 @@ class OrderService {
     return orders;
   }
 
-  async getOrderById(id) {
-    return await Order.findByPk(id, {
+  async getOrders({ page = 1, limit = 10 }) {
+    const offset = (page - 1) * limit;
+    return await Order.findAndCountAll({
+      limit,
+      offset,
       include: [
         { model: User, as: "User" },
         { model: Product, as: "Product" },
       ],
+      order: [["createdAt", "DESC"]],
     });
   }
 
-  async getAllOrders() {
-    return await Order.findAll({
+  async getOrderById(id) {
+    return await Order.findByPk(id, {
       include: [
         { model: User, as: "User" },
         { model: Product, as: "Product" },
@@ -97,6 +107,7 @@ class OrderService {
         { model: User, as: "User" },
         { model: Product, as: "Product" },
       ],
+      order: [["createdAt", "DESC"]],
     });
   }
 

@@ -1,10 +1,22 @@
-import React from "react";
-import { Button, Drawer, Typography, Space, Spin, message } from "antd";
+import React, { useState } from "react";
+import {
+  Button,
+  Drawer,
+  Typography,
+  Space,
+  Spin,
+  message,
+  Modal,
+  Form,
+  Input,
+} from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { useCart, useDeleteCartItem, useCreateOrder } from "../hooks/useApi";
 import { useNavigate } from "react-router-dom";
 
 const Cart = ({ visible, onVisibleChange }) => {
+  const [paymentModalVisible, setPaymentModalVisible] = useState(false);
+  const [form] = Form.useForm();
   const { data: cartItems, isLoading } = useCart({
     enabled: visible,
   });
@@ -25,10 +37,15 @@ const Cart = ({ visible, onVisibleChange }) => {
     }
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
+    setPaymentModalVisible(true);
+  };
+
+  const handlePaymentSubmit = async (values) => {
     try {
-      await createOrder.mutateAsync();
+      await createOrder.mutateAsync(values);
       message.success("Заказ успешно оформлен");
+      setPaymentModalVisible(false);
       onClose();
       navigate("/profile");
     } catch (error) {
@@ -140,6 +157,89 @@ const Cart = ({ visible, onVisibleChange }) => {
           )}
         </div>
       </Drawer>
+
+      <Modal
+        title='Оформление заказа'
+        open={paymentModalVisible}
+        onCancel={() => setPaymentModalVisible(false)}
+        footer={null}
+        width={500}
+      >
+        <Form
+          form={form}
+          layout='vertical'
+          onFinish={handlePaymentSubmit}
+          requiredMark={false}
+        >
+          <Form.Item
+            label='Номер карты'
+            name='cardNumber'
+            rules={[
+              { required: true, message: "Пожалуйста, введите номер карты" },
+              {
+                pattern: /^\d{16}$/,
+                message: "Номер карты должен содержать 16 цифр",
+              },
+            ]}
+          >
+            <Input placeholder='1234 5678 9012 3456' maxLength={16} />
+          </Form.Item>
+
+          <Form.Item
+            label='Имя владельца карты'
+            name='cardHolder'
+            rules={[
+              {
+                required: true,
+                message: "Пожалуйста, введите имя владельца карты",
+              },
+            ]}
+          >
+            <Input placeholder='JOHN DOE' />
+          </Form.Item>
+
+          <Form.Item
+            label='Срок действия карты'
+            name='cardExpiry'
+            rules={[
+              {
+                required: true,
+                message: "Пожалуйста, введите срок действия карты",
+              },
+              {
+                pattern: /^(0[1-9]|1[0-2])\/([0-9]{2})$/,
+                message: "Формат: ММ/ГГ",
+              },
+            ]}
+          >
+            <Input placeholder='MM/YY' maxLength={5} />
+          </Form.Item>
+
+          <Form.Item
+            label='Адрес доставки'
+            name='shippingAddress'
+            rules={[
+              { required: true, message: "Пожалуйста, введите адрес доставки" },
+            ]}
+          >
+            <Input.TextArea
+              rows={3}
+              placeholder='Введите полный адрес доставки'
+            />
+          </Form.Item>
+
+          <div style={{ textAlign: "right" }}>
+            <Button
+              type='primary'
+              htmlType='submit'
+              loading={createOrder.isLoading}
+              size='large'
+            >
+              Оплатить {subtotal.toFixed(2)} ₽
+            </Button>
+          </div>
+        </Form>
+      </Modal>
     </>
   );
 };

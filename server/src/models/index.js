@@ -13,18 +13,20 @@ const Product = require("./Product")(sequelize);
 const Cart = require("./Cart")(sequelize);
 const Order = require("./Order")(sequelize);
 
-Product.belongsTo(Category);
-Category.hasMany(Product);
+// Initialize model associations
+const models = {
+  User,
+  Category,
+  Product,
+  Cart,
+  Order,
+};
 
-Cart.belongsTo(User);
-User.hasMany(Cart);
-Cart.belongsTo(Product);
-Product.hasMany(Cart);
-
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsTo(Product);
-Product.hasMany(Order);
+Object.values(models).forEach((model) => {
+  if (model.associate) {
+    model.associate(models);
+  }
+});
 
 module.exports = {
   sequelize,
