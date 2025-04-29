@@ -6,6 +6,7 @@ class OrderService {
     const cartItems = await Cart.findAll({
       where: { userId },
       include: [{ model: Product, as: "Product" }],
+      raw: false,
     });
 
     console.log("Cart items:", JSON.stringify(cartItems, null, 2));
