@@ -6,14 +6,6 @@ class OrderService {
     const cartItems = await Cart.findAll({
       where: { userId },
       include: [{ model: Product, as: "Product" }],
-      attributes: [
-        "id",
-        "userId",
-        "productId",
-        "quantity",
-        "createdAt",
-        "updatedAt",
-      ],
     });
 
     if (cartItems.length === 0) {
@@ -22,50 +14,42 @@ class OrderService {
 
     const orders = await Promise.all(
       cartItems.map(async (cartItem) => {
-        const cartItemData = cartItem.get({ plain: true });
         console.log("Processing cart item:", {
-          id: cartItemData.id,
-          productId: cartItemData.productId,
-          quantity: cartItemData.quantity,
-          product: cartItemData.Product
+          id: cartItem.id,
+          productId: cartItem.Product.id,
+          quantity: cartItem.quantity,
+          product: cartItem.Product
             ? {
-                id: cartItemData.Product.id,
-                price: cartItemData.Product.price,
-                stock: cartItemData.Product.stock,
+                id: cartItem.Product.id,
+                price: cartItem.Product.price,
+                stock: cartItem.Product.stock,
               }
             : null,
         });
 
-        if (!cartItemData.productId) {
-          console.error("Missing productId in cart item:", cartItemData);
-          throw new Error("Missing productId in cart item");
+        if (!cartItem.Product || !cartItem.Product.id) {
+          console.error("Missing Product in cart item:", cartItem);
+          throw new Error("Missing Product in cart item");
         }
-        if (!cartItemData.quantity) {
-          console.error("Missing quantity in cart item:", cartItemData);
+        if (!cartItem.quantity) {
+          console.error("Missing quantity in cart item:", cartItem);
           throw new Error("Missing quantity in cart item");
         }
-        if (!cartItemData.Product) {
-          console.error(
-            "Missing Product association in cart item:",
-            cartItemData
-          );
-          throw new Error("Missing Product association in cart item");
-        }
-        if (!cartItemData.Product.price) {
-          console.error("Missing price in Product:", cartItemData.Product);
+        if (!cartItem.Product.price) {
+          console.error("Missing price in Product:", cartItem.Product);
           throw new Error("Missing price in Product");
         }
-        if (cartItemData.Product.stock < cartItemData.quantity) {
+        if (cartItem.Product.stock < cartItem.quantity) {
           throw new Error(
-            `Not enough stock for product ${cartItemData.Product.name}. Available: ${cartItemData.Product.stock}, requested: ${cartItemData.quantity}`
+            `Not enough stock for product ${cartItem.Product.name}. Available: ${cartItem.Product.stock}, requested: ${cartItem.quantity}`
           );
         }
 
         const orderData = {
           userId: userId,
-          productId: cartItemData.productId,
-          quantity: cartItemData.quantity,
-          totalPrice: cartItemData.quantity * cartItemData.Product.price,
+          productId: cartItem.Product.id,
+          quantity: cartItem.quantity,
+          totalPrice: cartItem.quantity * cartItem.Product.price,
           orderDate: new Date(),
           status: "pending",
           cardNumber: paymentInfo.cardNumber,
@@ -75,8 +59,8 @@ class OrderService {
         };
 
         await Product.update(
-          { stock: cartItemData.Product.stock - cartItemData.quantity },
-          { where: { id: cartItemData.productId } }
+          { stock: cartItem.Product.stock - cartItem.quantity },
+          { where: { id: cartItem.Product.id } }
         );
 
         const order = await Order.create(orderData);
