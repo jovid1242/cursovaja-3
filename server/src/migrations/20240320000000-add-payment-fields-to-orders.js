@@ -11,21 +11,25 @@ module.exports = {
     await queryInterface.addColumn("Orders", "cardNumber", {
       type: Sequelize.STRING,
       allowNull: false,
+      defaultValue: "", // добавили
     });
 
     await queryInterface.addColumn("Orders", "cardHolder", {
       type: Sequelize.STRING,
       allowNull: false,
+      defaultValue: "", // добавили
     });
 
     await queryInterface.addColumn("Orders", "cardExpiry", {
       type: Sequelize.STRING,
       allowNull: false,
+      defaultValue: "", // добавили
     });
 
     await queryInterface.addColumn("Orders", "shippingAddress", {
       type: Sequelize.STRING,
       allowNull: false,
+      defaultValue: "", // добавили
     });
   },
 
